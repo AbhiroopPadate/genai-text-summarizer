@@ -41,7 +41,7 @@ if GEMINI_API_KEY:
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     """Serve the frontend HTML."""
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 @app.post("/api/summarize", response_model=SummarizeResponse)
 async def summarize_text(req: SummarizeRequest):
