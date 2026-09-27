@@ -8,7 +8,7 @@ This project provides a clean user interface to paste long text and receive a co
 ## Architecture
 - **Frontend**: HTML5, Vanilla CSS (Custom design), Vanilla JavaScript.
 - **Backend**: Python 3.11 with FastAPI.
-- **AI/LLM**: Google Gemini API (`gemini-1.5-flash`).
+- **AI/LLM**: Google Gemini API (`gemini-3.8-flash`).
 - **Containerization**: Docker.
 - **Orchestration**: Kubernetes (Local using Docker Desktop).
 - **CI/CD**: GitHub Actions.
@@ -52,7 +52,7 @@ genai-text-summarizer/
 2. Edit `.env` and add your actual Gemini API key (DO NOT commit this file to Git):
    ```env
    GEMINI_API_KEY=your-gemini-api-key
-   GEMINI_MODEL=gemini-1.5-flash
+   GEMINI_MODEL=gemini-3.8-flash
    ```
 
 ### Running Locally (Without Docker)

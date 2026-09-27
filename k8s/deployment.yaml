@@ -27,4 +27,4 @@ spec:
               name: gemini-secret
               key: api-key
         - name: GEMINI_MODEL
-          value: "gemini-1.5-flash"
+          value: "gemini-3.8-flash"
