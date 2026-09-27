@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: genai-summarizer-service
+spec:
+  type: NodePort # Easier for local testing
+  selector:
+    app: genai-summarizer
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30080

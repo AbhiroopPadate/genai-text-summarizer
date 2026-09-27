@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genai-summarizer
+  labels:
+    app: genai-summarizer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: genai-summarizer
+  template:
+    metadata:
+      labels:
+        app: genai-summarizer
+    spec:
+      containers:
+      - name: genai-summarizer
+        image: genai-summarizer:latest
+        imagePullPolicy: Never # Use local image built in Docker Desktop
+        ports:
+        - containerPort: 8000
+        env:
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gemini-secret
+              key: api-key
+        - name: GEMINI_MODEL
+          value: "gemini-1.5-flash"
