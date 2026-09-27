@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-import google.generativeai as genai
+from google import genai
 from dotenv import load_dotenv
 import logging
 
@@ -34,9 +34,10 @@ class SummarizeResponse(BaseModel):
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 
-# Configure Gemini
+# Configure Gemini Client
+client = None
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+    client = genai.Client(api_key=GEMINI_API_KEY)
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -49,14 +50,12 @@ async def summarize_text(req: SummarizeRequest):
     if not req.text or not req.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty.")
     
-    if not GEMINI_API_KEY:
+    if not client:
         raise HTTPException(status_code=500, detail="Gemini API key is not configured.")
 
     try:
-        model = genai.GenerativeModel(GEMINI_MODEL)
         prompt = f"Summarize the following text concisely. Keep important points and use clear language. Use bullet points where appropriate:\n\n{req.text}"
-        
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
         summary = response.text
         return SummarizeResponse(summary=summary)
     
@@ -68,3 +67,4 @@ async def summarize_text(req: SummarizeRequest):
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy"}
+

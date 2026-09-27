@@ -26,23 +26,20 @@ def test_summarize_whitespace_text():
     assert response.status_code == 400
     assert response.json() == {"detail": "Text cannot be empty."}
 
-@patch("app.main.genai.GenerativeModel.generate_content")
-def test_summarize_success(mock_generate):
+@patch("app.main.client")
+def test_summarize_success(mock_client):
     # Mock the Gemini response
     mock_response = MagicMock()
     mock_response.text = "This is a mocked summary."
-    mock_generate.return_value = mock_response
+    mock_client.models.generate_content.return_value = mock_response
     
-    # Needs to pretend we have an API key for this test to pass the internal check
-    with patch("app.main.GEMINI_API_KEY", "dummy_key"):
-        response = client.post("/api/summarize", json={"text": "This is a long text to be summarized."})
-        assert response.status_code == 200
-        assert response.json() == {"summary": "This is a mocked summary."}
+    response = client.post("/api/summarize", json={"text": "This is a long text to be summarized."})
+    assert response.status_code == 200
+    assert response.json() == {"summary": "This is a mocked summary."}
 
-@patch("app.main.genai.GenerativeModel.generate_content")
-def test_summarize_missing_api_key(mock_generate):
-    # Ensure it fails correctly if no API key is present
-    with patch("app.main.GEMINI_API_KEY", None):
-        response = client.post("/api/summarize", json={"text": "Some text"})
-        assert response.status_code == 500
-        assert "Gemini API key is not configured" in response.json()["detail"]
+@patch("app.main.client", None)
+def test_summarize_missing_api_key():
+    # Ensure it fails correctly if client is None
+    response = client.post("/api/summarize", json={"text": "Some text"})
+    assert response.status_code == 500
+    assert "Gemini API key is not configured" in response.json()["detail"]
